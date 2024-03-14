@@ -6,6 +6,7 @@ const DATABASE = process.env.DB_DATABASE || 'files_manager';
 const url = `mongodb://${HOST}:${PORT}`;
 
 class DBClient {
+
   constructor() {
     this.client = new MongoClient(url, { useUnifiedTopology: true, useNewUrlParser: true });
     this.client.connect().then(() => {
@@ -14,9 +15,11 @@ class DBClient {
       console.log(err);
     });
   }
-
-  isAlive() {
-    return this.client.isConnected();
+  
+  async nbFiles() {
+    const files = this.db.collection('files');
+    const filesNum = await files.countDocuments();
+    return filesNum;
   }
 
   async nbUsers() {
@@ -25,10 +28,8 @@ class DBClient {
     return usersNum;
   }
 
-  async nbFiles() {
-    const files = this.db.collection('files');
-    const filesNum = await files.countDocuments();
-    return filesNum;
+  isAlive() {
+    return this.client.isConnected();
   }
 }
 
